@@ -216,6 +216,25 @@ test(`ThemeProvider theme augmenting`, t => {
   t.deepEqual(actual(), expected, `ThemeProvider should augmented theme`);
 });
 
+test(`ThemeProvider theme modification`, t => {
+  const ThemeProvider = createThemeProvider();
+  const theme = { themed: true, modified: false };
+  const modify = outerTheme =>
+    Object.assign({}, outerTheme, { modified: !outerTheme.modified });
+  const actual = getInterceptor();
+  const expected = { themed: true, modified: true };
+
+  mount(
+    <ThemeProvider theme={theme}>
+      <ThemeProvider theme={modify}>
+        <Trap.Context intercept={actual} />
+      </ThemeProvider>
+    </ThemeProvider>,
+  );
+
+  t.deepEqual(actual(), expected, `ThemeProvider should modify theme`);
+});
+
 test(`ThemeProvider propagates theme updates`, t => {
   const ThemeProvider = createThemeProvider();
   const theme = { themed: true };
